@@ -6,10 +6,19 @@ const app = express()
 const port = 8080
 const productos = new Productos()
 
-app.use(express.json());
+app.use(express.json())
+app.use(express.urlencoded({
+  extended: true
+}))
+
+app.use(express.static('public'))
 
 
-app.get('/api/productos/listar', (req, res) => {
+const routerApi = express.Router('/api');
+app.use('/api', routerApi)
+
+
+routerApi.get('/productos/listar', (req, res) => {
 
   try {
 
@@ -24,7 +33,7 @@ app.get('/api/productos/listar', (req, res) => {
 })
 
 
-app.get('/api/productos/listar/:id', (req, res) => {
+routerApi.get('/productos/listar/:id', (req, res) => {
 
   try {
 
@@ -39,10 +48,39 @@ app.get('/api/productos/listar/:id', (req, res) => {
 })
 
 
-app.post('/api/productos/guardar', (req, res) => {
+routerApi.post('/productos/guardar', (req, res) => {
 
   return res.send(productos.almacenarProducto(req.body))
 
+})
+
+routerApi.put('/productos/actualizar/:id', (req, res) => {
+
+  try {
+
+    return res.json(productos.actualizarProducto(req.params.id, req.body))
+
+  } catch({message}) {
+
+    console.log(message)
+    return res.json({error: message})
+
+  }
+})
+
+
+routerApi.delete('/productos/borrar/:id', (req, res) => {
+
+  try {
+
+    return res.json(productos.borrarProducto(req.params.id))
+
+  } catch({message}) {
+
+    console.log(message)
+    return res.json({error: message})
+
+  }
 })
 
 

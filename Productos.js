@@ -40,4 +40,33 @@ module.exports = class Productos{
 
     return producto
   }
+
+  actualizarProducto(id, {title, price, thumbnail}) {
+    const productoIndex = this.productosArray.findIndex(p => p.id == id )
+    
+    if(productoIndex === -1) {
+      throw new Error('producto no encontrado')
+    }
+
+    const productoActualizado = {
+      id,
+      title,
+      price,
+      thumbnail
+    }
+
+    this.productosArray[productoIndex] = productoActualizado
+
+    return productoActualizado
+  }
+
+  borrarProducto(id) {
+    const productoIndex = this.productosArray.findIndex(p => p.id == id )
+
+    if(productoIndex === -1) {
+      throw new Error('producto no encontrado')
+    }
+
+    return this.productosArray.splice(productoIndex, 1)[0]
+  }
 }
