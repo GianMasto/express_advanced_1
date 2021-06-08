@@ -1,4 +1,5 @@
 const express = require('express')
+const handlebars = require('express-handlebars')
 
 const Productos = require('./Productos')
 
@@ -11,11 +12,30 @@ app.use(express.urlencoded({
   extended: true
 }))
 
+
+
+app.engine('hbs', handlebars({
+  extname: '.hbs',
+  defaultLayout: 'index.hbs',
+  layoutsDir: __dirname + '/views/layouts',
+  partialsDir: __dirname + '/views/partials/'
+}))
+
+
+app.set('view engine', 'hbs')
+
+app.set('views', './views')
+
+
+
 app.use(express.static('public'))
 
 
 const routerApi = express.Router('/api');
 app.use('/api', routerApi)
+
+const routerProductos = express.Router('/productos');
+app.use('/productos', routerProductos)
 
 
 routerApi.get('/productos/listar', (req, res) => {
@@ -49,8 +69,8 @@ routerApi.get('/productos/listar/:id', (req, res) => {
 
 
 routerApi.post('/productos/guardar', (req, res) => {
-
-  return res.send(productos.almacenarProducto(req.body))
+  productos.almacenarProducto(req.body)
+  return res.redirect('/')
 
 })
 
@@ -79,6 +99,19 @@ routerApi.delete('/productos/borrar/:id', (req, res) => {
 
     console.log(message)
     return res.json({error: message})
+
+  }
+})
+
+
+routerProductos.get('/vista', (req, res) => {
+  try {
+    return res.render('main', {data: productos.obtenerProductos()})
+
+  } catch({message}) {
+
+    return res.render('main', {error: message})
+
 
   }
 })

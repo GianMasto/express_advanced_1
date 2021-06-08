@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="col-lg-8 mx-auto">
+    <h2 class="my-5">Vista de Productos</h2>
+
+    {{#if error}}
+      <div class="alert alert-warning" role="alert">
+        {{error}}
+      </div>
+    {{/if}}
+    {{#if data}}
+    <table class="table">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Precio</th>
+          <th scope="col">Foto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each data}}
+        <tr>
+          <td>{{this.title}}</td>
+          <td>${{this.price}}</td>
+          <td><img src="{{this.thumbnail}}" style="width:50px;height:50px;object-fit:contain;object-position:center;"></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{/if}}
+
+  </div>
+</div>
