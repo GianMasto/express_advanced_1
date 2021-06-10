@@ -1,5 +1,4 @@
 const express = require('express')
-const handlebars = require('express-handlebars')
 
 const Productos = require('./Productos')
 
@@ -13,7 +12,7 @@ app.use(express.urlencoded({
 }))
 
 
-app.set('view engine', 'pug')
+app.set('view engine', 'ejs')
 
 app.set('views', './views')
 
@@ -97,11 +96,11 @@ routerApi.delete('/productos/borrar/:id', (req, res) => {
 
 routerProductos.get('/vista', (req, res) => {
   try {
-    return res.render('main.pug', {data: productos.obtenerProductos()})
+    return res.render('main', {data: productos.obtenerProductos(), error: null})
 
   } catch({message}) {
 
-    return res.render('main.pug', {error: message})
+    return res.render('main', {error: message, data: null})
 
 
   }
