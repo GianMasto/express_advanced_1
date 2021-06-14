@@ -4,7 +4,30 @@ const Productos = require('./Productos')
 
 const app = express()
 const port = 8080
+
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
+
 const productos = new Productos()
+
+
+io.on('connection', socket => {
+  try {
+    io.sockets.emit('productos', productos.obtenerProductos())
+  } catch({message}) {
+    io.sockets.emit('productos', {error: message})
+  }
+
+
+  socket.on('actualizacion', data => {
+    try {
+      io.sockets.emit('productos', productos.obtenerProductos())
+    } catch({message}) {
+      io.sockets.emit('productos', {error: message})
+    }
+  })
+})
+
 
 app.use(express.json())
 app.use(express.urlencoded({
@@ -107,7 +130,7 @@ routerProductos.get('/vista', (req, res) => {
 })
 
 
-const server = app.listen(port, () => {
+const server = http.listen(port, () => {
   console.log(`Servidor corriendo en puerto:${port}`)
 })
 

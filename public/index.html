@@ -10,20 +10,14 @@
       integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
       crossorigin="anonymous"
     />
+    <script src="/socket.io/socket.io.js"></script>
   </head>
 
   <body>
       <div class="container">
           <div class="col-lg-8 mx-auto">
               <h2 class="my-5">Ingrese Producto</h2>
-              <!-- <form action="/api/productos/guardar" method="POST">
-                Nombre: <input type="text" name="title" /> Precio:
-                <input type="text" name="price" /> Foto URL:
-                <input type="text" name="thumbnail" />
-                <button>Enviar</button>
-              </form> -->
-          
-              <form action="/api/productos/guardar" method="POST">
+              <form action="/api/productos/guardar" method="POST" id="productos-form">
                 <div class="form-group mb-4">
                   <label for="title">Nombre: </label>
                   <input
@@ -56,8 +50,11 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Enviar</button>
               </form>
-              
+              <hr class="my-5">
+              <div id="list-container">
+              </div>
           </div>
       </div>
+    <script src="/index.js"></script>
   </body>
 </html>
