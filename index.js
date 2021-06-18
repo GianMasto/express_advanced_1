@@ -1,6 +1,8 @@
 const express = require('express')
 
 const Productos = require('./Productos')
+const Archivo = require('./Archivo')
+const { log } = require('console')
 
 const app = express()
 const port = 8080
@@ -9,13 +11,20 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
 const productos = new Productos()
+const archivoMensajes = new Archivo('mensajes.txt')
+archivoMensajes.escribirArchivo('[]')
 
-
-io.on('connection', socket => {
+io.on('connection', async socket => {
   try {
     io.sockets.emit('productos', productos.obtenerProductos())
   } catch({message}) {
     io.sockets.emit('productos', {error: message})
+  }
+
+  try {
+    socket.emit('mensajes', JSON.parse(await archivoMensajes.obtenerArchivo())) 
+  } catch({message}) {
+    socket.emit('mensajes', {error: message})
   }
 
 
@@ -26,6 +35,18 @@ io.on('connection', socket => {
       io.sockets.emit('productos', {error: message})
     }
   })
+
+  socket.on('message', async data => {
+      try {
+        const mensajesObj = JSON.parse(await archivoMensajes.obtenerArchivo()) 
+        let nuevosMensajes = JSON.stringify([...mensajesObj, data])
+        io.sockets.emit('mensajes', JSON.parse(await archivoMensajes.escribirArchivo(nuevosMensajes)))
+
+      } catch({message}) {
+        io.sockets.emit('mensajes', {error: message})
+      }
+  })
+
 })
 
 
