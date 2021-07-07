@@ -10,27 +10,36 @@ const port = 8080
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
-const productos = new Productos()
+const ProductosDB = require('./models/productos.models')
+const productosDB = new ProductosDB()
+productosDB.init()
+
+const MensajesDB = require('./models/mensajes.models')
+const mensajesDB = new MensajesDB()
+mensajesDB.init()
+
+
+
 const archivoMensajes = new Archivo('mensajes.txt')
 archivoMensajes.escribirArchivo('[]')
 
 io.on('connection', async socket => {
   try {
-    io.sockets.emit('productos', productos.obtenerProductos())
+    io.sockets.emit('productos', await productosDB.obtenerProductos())
   } catch({message}) {
     io.sockets.emit('productos', {error: message})
   }
 
   try {
-    socket.emit('mensajes', JSON.parse(await archivoMensajes.obtenerArchivo())) 
+    socket.emit('mensajes', await mensajesDB.obtenerMensajes()) 
   } catch({message}) {
     socket.emit('mensajes', {error: message})
   }
 
 
-  socket.on('actualizacion', data => {
+  socket.on('actualizacion', async (data) => {
     try {
-      io.sockets.emit('productos', productos.obtenerProductos())
+      io.sockets.emit('productos', await productosDB.obtenerProductos())
     } catch({message}) {
       io.sockets.emit('productos', {error: message})
     }
@@ -38,9 +47,8 @@ io.on('connection', async socket => {
 
   socket.on('message', async data => {
       try {
-        const mensajesObj = JSON.parse(await archivoMensajes.obtenerArchivo()) 
-        let nuevosMensajes = JSON.stringify([...mensajesObj, data])
-        io.sockets.emit('mensajes', JSON.parse(await archivoMensajes.escribirArchivo(nuevosMensajes)))
+        const mensajes  = await mensajesDB.agregarMensaje(data)
+        io.sockets.emit('mensajes', mensajes)
 
       } catch({message}) {
         io.sockets.emit('mensajes', {error: message})
@@ -72,11 +80,11 @@ const routerProductos = express.Router('/productos');
 app.use('/productos', routerProductos)
 
 
-routerApi.get('/productos/listar', (req, res) => {
+routerApi.get('/productos/listar', async (req, res) => {
 
   try {
 
-    return res.json(productos.obtenerProductos())
+    return res.json(await productosDB.obtenerProductos())
 
   } catch({message}) {
 
@@ -87,11 +95,11 @@ routerApi.get('/productos/listar', (req, res) => {
 })
 
 
-routerApi.get('/productos/listar/:id', (req, res) => {
+routerApi.get('/productos/listar/:id', async (req, res) => {
 
   try {
 
-    return res.json(productos.obtenerProducto(req.params.id))
+    return res.json(await productosDB.obtenerProducto(req.params.id))
 
   } catch({message}) {
 
@@ -102,17 +110,17 @@ routerApi.get('/productos/listar/:id', (req, res) => {
 })
 
 
-routerApi.post('/productos/guardar', (req, res) => {
-  productos.almacenarProducto(req.body)
+routerApi.post('/productos/guardar', async (req, res) => {
+  await productosDB.almacenarProducto(req.body)
   return res.redirect('/')
 
 })
 
-routerApi.put('/productos/actualizar/:id', (req, res) => {
+routerApi.put('/productos/actualizar/:id', async (req, res) => {
 
   try {
 
-    return res.json(productos.actualizarProducto(req.params.id, req.body))
+    return res.json(await productosDB.actualizarProducto(req.params.id, req.body))
 
   } catch({message}) {
 
@@ -123,11 +131,11 @@ routerApi.put('/productos/actualizar/:id', (req, res) => {
 })
 
 
-routerApi.delete('/productos/borrar/:id', (req, res) => {
+routerApi.delete('/productos/borrar/:id', async (req, res) => {
 
   try {
 
-    return res.json(productos.borrarProducto(req.params.id))
+    return res.json(await productosDB.borrarProducto(req.params.id))
 
   } catch({message}) {
 
@@ -138,9 +146,9 @@ routerApi.delete('/productos/borrar/:id', (req, res) => {
 })
 
 
-routerProductos.get('/vista', (req, res) => {
+routerProductos.get('/vista', async (req, res) => {
   try {
-    return res.render('main', {data: productos.obtenerProductos(), error: null})
+    return res.render('main', {data: await productosDB.obtenerProductos(), error: null})
 
   } catch({message}) {
 
@@ -149,7 +157,6 @@ routerProductos.get('/vista', (req, res) => {
 
   }
 })
-
 
 const server = http.listen(port, () => {
   console.log(`Servidor corriendo en puerto:${port}`)
