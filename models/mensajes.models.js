@@ -1,49 +1,48 @@
-const knex = require('knex')({
-  client: 'sqlite3',
-  connection: {
-    filename: './db/mensajes.sqlite'
-  },
-  useNullAsDefault: true
-});
+const mongoose = require('mongoose')
 
-module.exports = class MensajesDB {
-  constructor() {}
+const MensajeSchema = new mongoose.Schema({
+  email: {type: String, require: true},
+  message: {type: String, require: true},
+  date: {type: Number, require: true},
+})
 
-  async init() {
-    try {
-      const tableExists = await knex.schema.hasTable('mensajes')
-      if(!tableExists) {
-        return knex.schema.createTable('mensajes', t => {
-          t.string('email'),
-          t.string('message'),
-          t.integer('date')
-        })
+const MensajesMongo = mongoose.model('mensajes', MensajeSchema)
 
-      }
-  
-  
-    } catch (error) {
-      throw new Error(error)
-    }
+class MongoCRUD {
+
+  constructor(model) {
+      this.model = model;
   }
 
-  async agregarMensaje({email, message}) {
-    await knex('mensajes').insert({
-      email,
-      message,
-      date: Date.now(),
-    })
-
-    return this.obtenerMensajes()
+  getModel() {
+      return this.model;
   }
 
-  async obtenerMensajes() {
-    const mensajes = await knex.select().table('mensajes')
-    
-    return mensajes;
+  async create(data) {
+      return this.model.create(data);
   }
 
-  async borrarMensajes() {
-    await knex('mensajes').del()
+  async findById(id) {
+      return this.model.findById(id);
+  }
+
+  findAll() {
+      return this.model.find({});
+  }
+
+  update(id, toUpdate) {
+      return this.model.findByIdAndUpdate(id, toUpdate);
+  }
+
+  remove(id) {
+      return this.model.findByIdAndDelete(id);
   }
 }
+
+class MensajesController extends MongoCRUD {
+  constructor() {
+    super(MensajesMongo)
+  }
+}
+
+module.exports = new MensajesController();

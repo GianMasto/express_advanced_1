@@ -1,54 +1,50 @@
 const express = require('express')
+const mongoose = require('mongoose')
 
 const Productos = require('./Productos')
 const Archivo = require('./Archivo')
 const { log } = require('console')
 
+const mensajesController = require('./models/mensajes.models')
+
 const app = express()
 const port = 8080
 
 const http = require('http').Server(app)
-const io = require('socket.io')(http)
+const io = require('socket.io')(http);
 
-const ProductosDB = require('./models/productos.models')
-const productosDB = new ProductosDB()
-productosDB.init()
-
-const MensajesDB = require('./models/mensajes.models')
-const mensajesDB = new MensajesDB()
-mensajesDB.init()
+// const ProductosDB = require('./models/productos.models')
+// const productosDB = new ProductosDB()
+// productosDB.init()
 
 
+mongoose.connect('mongodb://localhost:27017/ecommerce2', {useNewUrlParser: true, useUnifiedTopology: true})
 
-const archivoMensajes = new Archivo('mensajes.txt')
-archivoMensajes.escribirArchivo('[]')
+mongoose.connection.on('connected', () => {
+  console.log('[Mongoose] - connected');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.log('[Mongoose] - error:', err);
+});
+
+// const MensajesDB = require('./models/mensajes.SQLite.models')
+// const mensajesDB = new MensajesDB()
+// mensajesDB.init()
+
 
 io.on('connection', async socket => {
-  try {
-    io.sockets.emit('productos', await productosDB.obtenerProductos())
-  } catch({message}) {
-    io.sockets.emit('productos', {error: message})
-  }
 
   try {
-    socket.emit('mensajes', await mensajesDB.obtenerMensajes()) 
+    socket.emit('mensajes', await mensajesController.findAll()) 
   } catch({message}) {
     socket.emit('mensajes', {error: message})
   }
 
-
-  socket.on('actualizacion', async (data) => {
-    try {
-      io.sockets.emit('productos', await productosDB.obtenerProductos())
-    } catch({message}) {
-      io.sockets.emit('productos', {error: message})
-    }
-  })
-
   socket.on('message', async data => {
       try {
-        const mensajes  = await mensajesDB.agregarMensaje(data)
-        io.sockets.emit('mensajes', mensajes)
+        await mensajesController.create(data)
+        io.sockets.emit('mensajes', await mensajesController.findAll())
 
       } catch({message}) {
         io.sockets.emit('mensajes', {error: message})
