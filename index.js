@@ -1,5 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const faker = require('faker');
+
 
 const Productos = require('./Productos')
 const Archivo = require('./Archivo')
@@ -152,6 +154,33 @@ routerProductos.get('/vista', async (req, res) => {
 
 
   }
+})
+
+
+routerProductos.get('/vista-test', (req, res) => {
+  let amount = req.query.cant || 10
+
+  if(amount == 0) {
+    return res.render('main', {
+      data: null,
+      error: 'No hay productos'
+    })
+  }
+
+
+  const data = []
+  for(let i = 0; i <= amount; i++ ) {
+    data.push({
+      title: faker.commerce.productName(),
+      price: faker.commerce.price(),
+      thumbnail: faker.image.image()
+    })
+  }
+
+  return res.render('main', {
+    data,
+    error: null
+  })
 })
 
 const server = http.listen(port, () => {
