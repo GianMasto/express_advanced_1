@@ -1,9 +1,16 @@
 const mongoose = require('mongoose')
 
 const MensajeSchema = new mongoose.Schema({
-  email: {type: String, require: true},
-  message: {type: String, require: true},
-  date: {type: Number, require: true},
+  author: {
+    id: {type: String, require: true},
+    nombre: {type: String, require: true},
+    apellido: {type: String, require: true},
+    edad: {type: Number, require: true},
+    alias: {type: String, require: true},
+    avatar: {type: String, require: true}
+  },
+  text: {type: String, require: true},
+  date: {type: Number, require: true}
 })
 
 const MensajesMongo = mongoose.model('mensajes', MensajeSchema)

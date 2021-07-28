@@ -1,4 +1,5 @@
 const socket = io();
+const { denormalize, schema } = normalizr;
 
 const productosForm = document.getElementById("productos-form");
 const mensajesForm = document.getElementById("mensajes-form");
@@ -62,9 +63,9 @@ const renderChat = (chatArr, chatContainerSelector) => {
     </div>`
   } else {
 
-    chatHTML = chatArr.map(({email, message, date}) => `
+    chatHTML = chatArr.map((message) => `
       <div class="single-chat">
-        <p><span class="email">${email}</span> [<span class="date">${new Date(date).toLocaleString()}</span>] : <span class="message">${message}</span></p>
+        <p><span class="email">${message._doc.author.id}</span> [<span class="date">${new Date(message._doc.date).toLocaleString()}</span>] : <span class="message">${message._doc.text}</span></p>
       </div>
     `).join('')
   }
@@ -77,7 +78,26 @@ socket.on("productos", (data) => {
   generateList(data, "#list-container");
 });
 socket.on("mensajes", (data) => {
-  renderChat(data, '#chat-container')
+  const usersSchema = new schema.Entity('users', {}, {idAttribute: 'email'})
+  const messageSchema = new schema.Entity('messages', {
+      author: usersSchema
+  }, {idAttribute: 'date'})
+  const messagesSchema = new schema.Entity('all_messages', {
+      messages: [messageSchema]
+  }, {idAttribute: "id"})
+  const denormalizedData = denormalize(data.result, messagesSchema, data.entities)
+
+
+  const sizeAfterNormalization = JSON.stringify(data).length
+  const sizeAfterDenormalization = JSON.stringify(denormalizedData).length
+  const compressionRate = Math.ceil(100 - (sizeAfterDenormalization * 100 / sizeAfterNormalization))
+
+
+  document.querySelector("#compression-rate").innerHTML = compressionRate
+
+
+  renderChat(denormalizedData.messages, '#chat-container')
+
 });
 
 
@@ -90,13 +110,22 @@ productosForm.addEventListener("submit", () => {
 mensajesForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  const formElements = e.target.elements
+
 
   socket.emit("message", {
-    email: e.target.elements['chat-email'].value,
-    message: e.target.elements['chat-text'].value,
+    author: {
+      id: formElements['chat-email'].value,
+      nombre: formElements['chat-name'].value,
+      apellido: formElements['chat-last-name'].value,
+      edad: formElements['chat-age'].value,
+      alias: formElements['chat-nickname'].value,
+      avatar: formElements['chat-avatar'].value
+    },
+    text: formElements['chat-text'].value,
     date: Date.now()
   });
 
-  e.target.elements['chat-text'].value = ''
+  formElements['chat-text'].value = ''
 
 });

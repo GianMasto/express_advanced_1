@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Formulario de Ingreso de Productos</title>
+    <script src="https://cdn.jsdelivr.net/npm/normalizr@3.6.1/dist/normalizr.browser.min.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -21,7 +22,7 @@
       }
       .single-chat .message {
         color: #198754;
-        font-style: italicv;
+        font-style: italic;
       }
     </style>
   </head>
@@ -68,7 +69,8 @@
               <div id="list-container">
               </div>
               <hr class="my-5">
-              <h3 class="mb-5">Centro de mensajes</h3>
+              <h3>Centro de mensajes</h3>
+              <h4 class="mb-5">Compresión: <span id="compression-rate"></span>%</h4>
               <form id="mensajes-form">
                 <div class="form-group mb-4">
                   <input
@@ -77,7 +79,57 @@
                     id="chat-email"
                     name="chat-email"
                     required
-                    placeholder="Ingresar Mail"
+                    placeholder="Mail"
+                  />
+                </div>
+                <div class="form-group mb-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="chat-name"
+                    name="chat-name"
+                    required
+                    placeholder="Nombre"
+                  />
+                </div>
+                <div class="form-group mb-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="chat-last-name"
+                    name="chat-last-name"
+                    required
+                    placeholder="Apellido"
+                  />
+                </div>
+                <div class="form-group mb-4">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="chat-age"
+                    name="chat-age"
+                    required
+                    placeholder="Edad"
+                  />
+                </div>
+                <div class="form-group mb-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="chat-nickname"
+                    name="chat-nickname"
+                    required
+                    placeholder="Alias"
+                  />
+                </div>
+                <div class="form-group mb-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="chat-avatar"
+                    name="chat-avatar"
+                    required
+                    placeholder="Avatar URL"
                   />
                 </div>
                 <div id="chat-container" class="mb-4"></div>
@@ -88,7 +140,7 @@
                     id="chat-text"
                     name="chat-text"
                     required
-                    placeholder="Ingresar mensaje..."
+                    placeholder="Mensaje..."
                   />
                   <button type="submit" class="btn btn-primary">Enviar</button>
                 </div>

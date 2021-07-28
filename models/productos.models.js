@@ -13,22 +13,24 @@ module.exports = class ProductosDB {
 
 
   async init() {
-      try {
-        const tableExists = await knex.schema.hasTable('productos')
-        if(!tableExists) {
-          return knex.schema.createTable('productos', t => {
-            t.increments('id'),
-            t.string('title'),
-            t.float('price'),
-            t.string('thumbnail')
-          })
+      // try {
+      //   const tableExists = await knex.schema.hasTable('productos')
+      //   if(!tableExists) {
+      //     return knex.schema.createTable('productos', t => {
+      //       t.increments('id'),
+      //       t.string('title'),
+      //       t.float('price'),
+      //       t.string('thumbnail')
+      //     })
 
-        }
+      //   }
     
     
-      } catch (error) {
-        throw new Error(error)
-      }
+      // } catch (error) {
+      //   throw new Error(error)
+      // }
+
+      console.log('descomentar lineas para iniciar mysql');
   }
 
   async checkForErrors(id) {

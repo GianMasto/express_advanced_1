@@ -1,11 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const faker = require('faker');
-
-
-const Productos = require('./Productos')
-const Archivo = require('./Archivo')
-const { log } = require('console')
+const { normalize, schema } = require('normalizr')
 
 const mensajesController = require('./models/mensajes.models')
 
@@ -15,19 +11,19 @@ const port = 8080
 const http = require('http').Server(app)
 const io = require('socket.io')(http);
 
-// const ProductosDB = require('./models/productos.models')
-// const productosDB = new ProductosDB()
-// productosDB.init()
+const ProductosDB = require('./models/productos.models')
+const productosDB = new ProductosDB()
+productosDB.init()
 
 
-mongoose.connect('mongodb://localhost:27017/ecommerce2', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb://localhost:27017/ecommerce3', {useNewUrlParser: true, useUnifiedTopology: true})
 
 mongoose.connection.on('connected', () => {
-  console.log('[Mongoose] - connected');
+  console.log('[Mongoose] - connected')
 });
 
 mongoose.connection.on('error', (err) => {
-  console.log('[Mongoose] - error:', err);
+  console.log('[Mongoose] - error:', err)
 });
 
 // const MensajesDB = require('./models/mensajes.SQLite.models')
@@ -35,10 +31,35 @@ mongoose.connection.on('error', (err) => {
 // mensajesDB.init()
 
 
-io.on('connection', async socket => {
+function normalizeMessages(array) {
 
+  const messages = {
+    id: 1,
+    messages: [...array]
+  }
+
+  const usersSchema = new schema.Entity('users', {}, {idAttribute: 'email'})
+
+  const messageSchema = new schema.Entity('messages', {
+      author: usersSchema
+  }, {idAttribute: 'date'})
+
+  const messagesSchema = new schema.Entity('all_messages', {
+      messages: [messageSchema]
+  }, {idAttribute: "id"})
+
+  return normalize(messages, messagesSchema)
+
+}
+
+
+io.on('connection', async socket => {
   try {
-    socket.emit('mensajes', await mensajesController.findAll()) 
+  const messagesFromMongo = await mensajesController.findAll()
+  const normalizedMessages = normalizeMessages(messagesFromMongo)
+
+
+    socket.emit('mensajes', normalizedMessages) 
   } catch({message}) {
     socket.emit('mensajes', {error: message})
   }
@@ -46,7 +67,11 @@ io.on('connection', async socket => {
   socket.on('message', async data => {
       try {
         await mensajesController.create(data)
-        io.sockets.emit('mensajes', await mensajesController.findAll())
+
+        const messagesFromMongo = await mensajesController.findAll()
+        const normalizedMessages = normalizeMessages(messagesFromMongo)
+
+        io.sockets.emit('mensajes', normalizedMessages)
 
       } catch({message}) {
         io.sockets.emit('mensajes', {error: message})
