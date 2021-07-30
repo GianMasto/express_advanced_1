@@ -30,6 +30,10 @@
   <body>
       <div class="container">
           <div class="col-lg-8 mx-auto">
+              <div class="alert alert-primary my-5 d-flex align-items-center justify-content-between flex-column flex-md-row" id="welcome-message" role="alert">
+                <h1>Bienvenido <span></span></h1>
+                <a href="/logout" class="btn btn-danger">Logout</a>
+              </div>
               <h2 class="my-5">Ingrese Producto</h2>
               <form action="/api/productos/guardar" method="POST" id="productos-form">
                 <div class="form-group mb-4">

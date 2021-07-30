@@ -1,0 +1,22 @@
+<%- include('./layout') -%>
+<body>
+  <div class="container">
+    <div class="col-lg-8 mx-auto">
+      <h2 class="my-5">Login</h2>
+      <form action="/login" method="POST" id="login-form">
+        <div class="form-group mb-4">
+          <label for="title">Nombre: </label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </form>
+    </div>
+</div>
+</body>
+</html>

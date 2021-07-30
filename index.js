@@ -1,9 +1,13 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const session = require('express-session')
+const cookieParser = require('cookie-parser')
 
 const apiRouter = require('./routes/api')
 const productosRouter = require('./routes/productos')
+const mainRouter = require('./routes/main')
+
+const authMiddleware = require('./middlewares/auth')
 
 const normalizeMessages = require('./helpers/normalizeMessages')
 
@@ -63,11 +67,14 @@ app.use(express.json())
 app.use(express.urlencoded({
   extended: true
 }))
+app.use(cookieParser())
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
 }))
+app.use(authMiddleware)
+
 
 app.set('view engine', 'ejs')
 app.set('views', './views')
@@ -75,7 +82,7 @@ app.set('views', './views')
 
 app.use(express.static('public'))
 
-
+app.use('/', mainRouter)
 app.use('/api', apiRouter)
 app.use('/productos', productosRouter)
 

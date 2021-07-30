@@ -3,6 +3,7 @@ const { denormalize, schema } = normalizr;
 
 const productosForm = document.getElementById("productos-form");
 const mensajesForm = document.getElementById("mensajes-form");
+const welcomeMessageSpan = document.querySelector("#welcome-message span")
 
 
 const generateList = (productsArray, listContainerSelector) => {
@@ -72,6 +73,17 @@ const renderChat = (chatArr, chatContainerSelector) => {
 
   chatContainer.innerHTML = chatHTML
 }
+
+
+
+const cookies = document.cookie.split('; ').reduce((prev, current) => {
+  const [name, ...value] = current.split('=');
+  prev[name] = value.join('=');
+  return prev;
+}, {});
+
+welcomeMessageSpan.innerHTML = cookies.userLogged
+
 
 
 socket.on("productos", (data) => {
