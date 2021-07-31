@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
+const MongoStore = require('connect-mongo')
 
 const apiRouter = require('./routes/api')
 const productosRouter = require('./routes/productos')
@@ -69,6 +70,11 @@ app.use(express.urlencoded({
 }))
 app.use(cookieParser())
 app.use(session({
+  store: MongoStore.create({
+    mongoUrl: 'mongodb+srv://gian:gian@cluster0.o9qpe.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+    mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
+    ttl: 10
+  }),
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
