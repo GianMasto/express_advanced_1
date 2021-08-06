@@ -1,11 +1,21 @@
 const express = require('express')
+const passportMiddleware = require('../middlewares/passport')
 
-const { loginView, loginPost, logout } = require('../controllers/main')
+const { GETlogin, POSTlogin, GETsignup, POSTsignup, GETfail, GETlogout } = require('../controllers/main')
 
 const router = express.Router()
 
-router.get('/login', loginView)
-router.post('/login', loginPost)
-router.get('/logout', logout)
+// LOGIN
+router.get('/login', GETlogin)
+router.post('/login', passportMiddleware.authenticate('login', {failureRedirect: '/fail'}), POSTlogin)
 
+// SIGNUP
+router.get('/signup', GETsignup)
+router.post('/signup', passportMiddleware.authenticate('signup', {failureRedirect: '/fail'}), POSTsignup)
+
+// FAIL 
+router.get('/fail', GETfail)
+
+// LOGOUT
+router.get('/logout', GETlogout)
 module.exports = router

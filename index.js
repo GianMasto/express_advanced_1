@@ -4,6 +4,8 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const MongoStore = require('connect-mongo')
 
+const passportMiddleware = require('./middlewares/passport')
+
 const apiRouter = require('./routes/api')
 const productosRouter = require('./routes/productos')
 const mainRouter = require('./routes/main')
@@ -13,6 +15,9 @@ const authMiddleware = require('./middlewares/auth')
 const normalizeMessages = require('./helpers/normalizeMessages')
 
 const mensajesController = require('./models/mensajes.models')
+
+
+
 
 const app = express()
 const port = 8080
@@ -79,6 +84,10 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }))
+
+app.use(passportMiddleware.initialize())
+app.use(passportMiddleware.session())
+
 app.use(authMiddleware)
 
 
