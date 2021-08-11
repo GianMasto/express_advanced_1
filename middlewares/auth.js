@@ -10,7 +10,7 @@
 
 
 const authMiddleware = (req, res, next) => {
-  if(req.isAuthenticated() || req.path == '/login' || req.path == '/logout' || req.path == '/signup' || req.path == '/fail') {
+  if(req.isAuthenticated() || req.path == '/login' || req.path == '/logout' || req.path == '/signup' || req.path == '/fail' || req.path == '/auth/facebook' || req.path == '/auth/facebook/callback') {
     return next()
   }
 

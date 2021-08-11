@@ -1,0 +1,15 @@
+<%- include('./layout') -%>
+<body>
+  <div class="container">
+    <div class="col-lg-8 mx-auto">
+      <div class="alert alert-primary my-5 d-flex align-items-center justify-content-between flex-column flex-md-row" id="welcome-message" role="alert">
+        <h1>Bienvenido</h1>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+      </div>
+      <p>Nombre: <%= name %></p>
+      <p>Email: <%= email %></p>
+      <p>Foto: <img style="border-radius: 1000rem" src="<%= photo %>" alt=""></p>
+    </div>
+</div>
+</body>
+</html>

@@ -23,6 +23,17 @@
 //   logout
 // }
 
+
+const GETmain = (req, res) => {
+  if(!req.isAuthenticated()) {
+    return res.redirect('/login')
+  }
+  
+  const {name, email, picture} = JSON.parse(req.user._raw)
+
+  return res.render('user-info', { name, email, photo: picture.data.url })
+}
+
 // LOGIN
 const GETlogin = (req, res) => {
   if(req.isAuthenticated()) {
@@ -32,7 +43,9 @@ const GETlogin = (req, res) => {
 }
 
 const POSTlogin = (req, res) => {
-  res.cookie('userLogged', req.body.username)
+  console.log(req.user.displayName)
+
+  res.cookie('userLogged', req.user.displayName)
   return res.redirect('/login')
 }
 
@@ -45,7 +58,8 @@ const GETsignup = (req, res) => {
 }
 
 const POSTsignup = (req, res) => {
-  res.cookie('userLogged', req.body.username)
+  console.log(req.user.displayName)
+  res.cookie('userLogged', req.user.displayName)
   return res.redirect('/signup')
 }
 
@@ -61,6 +75,7 @@ const GETlogout = (req, res) => {
 }
 
 module.exports = {
+  GETmain,
   GETlogin,
   POSTlogin,
   GETsignup,

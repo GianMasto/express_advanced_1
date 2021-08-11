@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const session = require('express-session')
@@ -88,14 +89,14 @@ app.use(session({
 app.use(passportMiddleware.initialize())
 app.use(passportMiddleware.session())
 
-app.use(authMiddleware)
+// app.use(authMiddleware)
 
 
 app.set('view engine', 'ejs')
 app.set('views', './views')
 
 
-app.use(express.static('public'))
+// app.use(express.static('public'))
 
 app.use('/', mainRouter)
 app.use('/api', apiRouter)
