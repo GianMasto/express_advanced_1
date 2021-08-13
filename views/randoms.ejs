@@ -1,0 +1,11 @@
+<%- include('./layout') -%>
+<body>
+  <div class="container">
+    <div class="col-lg-8 mx-auto">
+      <h2 class="my-5">Randoms</h2>
+      <p><strong>Numeros: </strong><%= JSON.stringify(numbersObject, null, 2).replace('{', '').replace('}', '').replace(/"/g, '').replace(/,/g, '   |   ') %></p>
+
+    </div>
+</div>
+</body>
+</html>

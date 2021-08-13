@@ -23,6 +23,8 @@
 //   logout
 // }
 
+const { fork } = require('child_process')
+const path = require('path')
 
 const GETmain = (req, res) => {
   if(!req.isAuthenticated()) {
@@ -74,6 +76,32 @@ const GETlogout = (req, res) => {
   return res.redirect('/')
 }
 
+// INFO
+const GETinfo = (req, res) => {
+  return res.render('info', {
+    args: process.argv,
+    os: process.platform,
+    version: process.version,
+    memoryUsage: process.memoryUsage(),
+    execPath: process.execPath,
+    pid: process.pid,
+    currentPath: process.cwd()
+  })
+}
+
+// RANDOMS
+const GETrandoms = (req, res) => {
+  const randomNumbersScript = fork(path.join(__dirname, '../child_process/generateRandomNumbers.js'))
+
+  const numbersAmount = req.query.cant || 100000000
+
+  randomNumbersScript.send(numbersAmount)
+
+  randomNumbersScript.on('message', numbersObject => {
+    return res.render('randoms', {numbersObject})
+  })
+}
+
 module.exports = {
   GETmain,
   GETlogin,
@@ -81,5 +109,7 @@ module.exports = {
   GETsignup,
   POSTsignup,
   GETfail,
-  GETlogout
+  GETlogout,
+  GETinfo,
+  GETrandoms
 }

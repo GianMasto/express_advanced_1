@@ -21,7 +21,7 @@ const mensajesController = require('./models/mensajes.models')
 
 
 const app = express()
-const port = 8080
+const port = process.argv[2] || 8080
 
 const http = require('http').Server(app)
 const io = require('socket.io')(http);
@@ -108,3 +108,5 @@ const server = http.listen(port, () => {
 })
 
 server.on('error', error =>  console.error(`Error en el server ${error}`))
+
+process.on('exit', code => console.log(`Server about to exit with code: ${code}`))

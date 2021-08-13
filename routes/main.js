@@ -1,7 +1,7 @@
 const express = require('express')
 const passportMiddleware = require('../middlewares/passport')
 
-const { GETmain, GETlogin, POSTlogin, GETsignup, POSTsignup, GETfail, GETlogout } = require('../controllers/main')
+const { GETmain, GETlogin, POSTlogin, GETsignup, POSTsignup, GETfail, GETlogout, GETinfo, GETrandoms } = require('../controllers/main')
 
 const router = express.Router()
 
@@ -32,3 +32,10 @@ router.get('/auth/facebook/callback', passportMiddleware.authenticate('facebook'
   successRedirect: '/',
   failureRedirect: '/fail'
 }))
+
+
+// INFO
+router.get('/info', GETinfo)
+
+// RANDOMS
+router.get('/randoms', GETrandoms)

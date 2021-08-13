@@ -1,0 +1,20 @@
+<%- include('./layout') -%>
+<body>
+  <div class="container">
+    <div class="col-lg-8 mx-auto">
+      <h2 class="my-5">Info</h2>
+      <ul>
+        <li><p><strong>Argumentos de entrada: </strong><%= args.join(' | ') %></p></li>
+        <li><p><strong>Nombre de la plataforma: </strong><%= os %></p></li>
+        <li><p><strong>Versión de node.js: </strong><%= version %></p></li>
+        <li><p><strong>Uso de memoria: </strong><%= JSON.stringify(memoryUsage, null, 2) %></p></li>
+        <li><p><strong>Path de ejecucion: </strong><%= execPath %></p></li>
+        <li><p><strong>Process ID: </strong><%= pid %></p></li>
+        <li><p><strong>Carpeta corriente: </strong><%= currentPath %></p></li>
+
+      </ul>
+
+    </div>
+</div>
+</body>
+</html>

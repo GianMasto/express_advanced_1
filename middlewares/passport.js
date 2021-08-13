@@ -6,6 +6,9 @@ const Users = require('../models/users.models')
 const isValidPassword = require('../helpers/isValidPassword')
 const createHash = require('../helpers/createHash')
 
+const port = process.argv[2] || 8080
+
+
 passport.serializeUser(function(user, done) {
   done(null, user);
 })
@@ -16,9 +19,9 @@ passport.deserializeUser(function(user, done) {
 
 
 passport.use(new FacebookStrategy({
-    clientID:  process.env.FACEBOOK_CLIENT_ID,
-    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    callbackURL: 'http://localhost:8080/auth/facebook/callback',
+    clientID: process.argv[3] || '360282842267576',
+    clientSecret: process.argv[4] || 'f0c0be65183cd6f6f543340e5d716234',
+    callbackURL: `http://localhost:${port}/auth/facebook/callback`,
     profileFields: ['id', 'displayName', 'photos', 'emails'],
     scope: ['email']
   },
