@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "pm2:fork": "pm2 start index.js --name='server-1' --watch",
+    "pm2:cluster": "pm2 start index.js --name='server-1' --watch -i max",
+    "forever": "forever start ./index.js"
   },
   "keywords": [],
   "author": "",
@@ -28,5 +31,9 @@
     "passport-local": "^1.0.0",
     "socket.io": "^4.1.2",
     "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "forever": "^4.0.1",
+    "pm2": "^5.1.0"
   }
 }

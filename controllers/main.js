@@ -85,7 +85,8 @@ const GETinfo = (req, res) => {
     memoryUsage: process.memoryUsage(),
     execPath: process.execPath,
     pid: process.pid,
-    currentPath: process.cwd()
+    currentPath: process.cwd(),
+    cpus: require('os').cpus().length
   })
 }
 
