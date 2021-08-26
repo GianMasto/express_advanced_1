@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const MongoStore = require('connect-mongo')
+const compression = require('compression')
 
 const passportMiddleware = require('./middlewares/passport')
 
@@ -21,6 +22,7 @@ const mensajesController = require('./models/mensajes.models')
 
 
 const app = express()
+app.use(compression())
 const port = process.argv[2] || 8080
 
 const http = require('http').Server(app)

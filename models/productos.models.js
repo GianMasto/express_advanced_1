@@ -1,3 +1,5 @@
+const logger = require('../helpers/logger')
+
 const knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -30,13 +32,14 @@ module.exports = class ProductosDB {
       //   throw new Error(error)
       // }
 
-      console.log('descomentar lineas para iniciar mysql');
+      logger.warn('descomentar lineas para iniciar mysql');
   }
 
   async checkForErrors(id) {
     const productos = await knex.select().table('productos')
 
     if(productos.length === 0) {
+      logger.error('no hay productos cargados')
       throw new Error('no hay productos cargados')
     }
 
@@ -44,6 +47,7 @@ module.exports = class ProductosDB {
       const producto = await knex.select().table('productos').where('id', id)
 
       if(producto.length === 0) {
+        logger.error('producto no encontrado')
         throw new Error('producto no encontrado')
       }
     }
@@ -91,6 +95,7 @@ module.exports = class ProductosDB {
     const producto = await this.obtenerProducto(id);
    await knex('productos').del().where('id', id)
 
+   logger.info(`producto con id ${id} borrado de la db`)
     return producto
   }
 }
