@@ -78,7 +78,7 @@ const GETlogout = (req, res) => {
 
 // INFO
 const GETinfo = (req, res) => {
-  return res.render('info', {
+  const infoObject = {
     args: process.argv,
     os: process.platform,
     version: process.version,
@@ -87,7 +87,9 @@ const GETinfo = (req, res) => {
     pid: process.pid,
     currentPath: process.cwd(),
     cpus: require('os').cpus().length
-  })
+  }
+  // console.log(infoObject)
+  return res.render('info', infoObject)
 }
 
 // RANDOMS
