@@ -25,6 +25,8 @@
 
 const { fork } = require('child_process')
 const path = require('path')
+const sendSms = require('../helpers/sendSms')
+const sendMail = require('../helpers/sendMail')
 
 const GETmain = (req, res) => {
   if(!req.isAuthenticated()) {
@@ -32,6 +34,19 @@ const GETmain = (req, res) => {
   }
   
   const {name, email, picture} = JSON.parse(req.user._raw)
+
+  sendMail('ethereal', {
+    from: 'App nodejs',
+    to: 'johnathan.luettgen6@ethereal.email',
+    subject: `Login - ${name} - ${new Date().toLocaleString()}`
+  })
+
+  sendMail('gmail', {
+    from: 'App nodejs',
+    to: email,
+    subject: `Login - ${name} - ${new Date().toLocaleString()}`,
+    html: `<img src="${picture.data.url}" />`
+  })
 
   return res.render('user-info', { name, email, photo: picture.data.url })
 }
@@ -72,6 +87,17 @@ const GETfail = (req, res) => {
 
 //LOGOUT
 const GETlogout = (req, res) => {
+
+  const {name} = JSON.parse(req.user._raw)
+
+  sendSms('Logout', '+19136677188', '+54 223 466-4307')
+  sendMail('ethereal', {
+    from: 'App nodejs',
+    to: 'johnathan.luettgen6@ethereal.email',
+    subject: `Logout - ${name} - ${new Date().toLocaleString()}`
+  })
+
+
   req.logout()
   return res.redirect('/')
 }

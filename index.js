@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser')
 const MongoStore = require('connect-mongo')
 const compression = require('compression')
 
+const PORT = require('./helpers/PORT')
+
 const passportMiddleware = require('./middlewares/passport')
 
 const apiRouter = require('./routes/api')
@@ -23,12 +25,12 @@ const mensajesController = require('./models/mensajes.models')
 
 const app = express()
 app.use(compression())
-const port = process.env.PORT || process.argv[2] || 8080
 
 const http = require('http').Server(app)
 const io = require('socket.io')(http);
 
 const ProductosDB = require('./models/productos.models')
+const logger = require('./helpers/logger')
 const productosDB = new ProductosDB()
 productosDB.init()
 
@@ -105,8 +107,8 @@ app.use('/api', apiRouter)
 app.use('/productos', productosRouter)
 
 
-const server = http.listen(port, () => {
-  console.log(`Servidor corriendo en puerto:${port}`)
+const server = http.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto:${PORT}`)
 })
 
 server.on('error', error =>  console.error(`Error en el server ${error}`))
